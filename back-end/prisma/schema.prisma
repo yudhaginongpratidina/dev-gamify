@@ -1,0 +1,26 @@
+generator client {
+    provider = "prisma-client-js"   // Specifies the Prisma Client as the generator
+}
+
+datasource db {
+    provider = "mysql"              // Specifies MySQL as the database provider
+    url      = env("DATABASE_URL")  // Database connection URL from environment variable
+}
+
+enum Role {
+    user       // Regular user role
+    admin      // Admin user role
+    superadmin // Superadmin user role
+}
+
+// Model definition for the User table
+model User {
+    id        Int      @id @default(autoincrement())    // Primary key with auto-increment
+    fullname  String                                    // Full name of the user
+    email     String   @unique                          // Unique email address
+    password  String                                    // User password
+    role      Role     @default(user)                   // User role with default value 'user'
+    createdAt DateTime @default(now())                  // Timestamp for when the user was created
+    updatedAt DateTime @updatedAt                       // Timestamp for when the user was last updated
+    deleted   Boolean  @default(false)                  // Soft delete flag with default value 'false'
+}
