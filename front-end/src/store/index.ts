@@ -10,7 +10,7 @@ const AuthPersistConfig = { key: 'auth', storage };
 
 export const store = configureStore({
     reducer: {
-        auth: persistReducer(AuthPersistConfig, AuthSlice),  // Persisting the authentication slice
+        auth: persistReducer(AuthPersistConfig, AuthSlice),
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

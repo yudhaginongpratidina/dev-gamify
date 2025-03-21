@@ -20,6 +20,8 @@ model User {
     email     String   @unique                          // Unique email address
     password  String                                    // User password
     role      Role     @default(user)                   // User role with default value 'user'
+    exp       Int      @default(0)                      // User experience points
+    point     Int      @default(0)                      // User reward points
     createdAt DateTime @default(now())                  // Timestamp for when the user was created
     updatedAt DateTime @updatedAt                       // Timestamp for when the user was last updated
     deleted   Boolean  @default(false)                  // Soft delete flag with default value 'false'
