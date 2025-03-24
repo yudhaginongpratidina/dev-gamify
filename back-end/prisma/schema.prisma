@@ -13,6 +13,12 @@ enum Role {
     superadmin // Superadmin user role
 }
 
+enum Level {
+    beginner        // Beginner level
+    intermediate    // Intermediate level
+    advanced        // Advanced level
+}
+
 // Model definition for the User table
 model User {
     id        Int      @id @default(autoincrement())    // Primary key with auto-increment
@@ -25,4 +31,22 @@ model User {
     createdAt DateTime @default(now())                  // Timestamp for when the user was created
     updatedAt DateTime @updatedAt                       // Timestamp for when the user was last updated
     deleted   Boolean  @default(false)                  // Soft delete flag with default value 'false'
+
+    // Relationship with the Module table
+    classes   Class[]
+}
+
+// Model definition for the Module table
+model Class {
+    id          Int         @id @default(autoincrement())    // Primary key with auto-increment
+    authorId    Int                                          // Foreign key referencing the User table
+    title       String                                       // Module title
+    level       Level       @default(beginner)               // Module level with default value 'beginner'
+    pointUnlock Int         @default(0)                      // Point required to unlock the module
+    createdAt   DateTime    @default(now())                  // Timestamp for when the module was created
+    updatedAt   DateTime    @updatedAt                       // Timestamp for when the module was last updated
+    deleted     Boolean     @default(false)                  // Soft delete flag with default value 'false'
+
+    // Relationship with the User table
+    author    User     @relation(fields: [authorId], references: [id])
 }

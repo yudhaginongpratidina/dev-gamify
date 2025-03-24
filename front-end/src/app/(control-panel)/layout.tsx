@@ -96,9 +96,9 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
                             <span className="capitalize">my lessons</span>
                         </Link>
                         {role === "admin" && (
-                            <Link href="" className={`w-full p-1.5 flex items-center gap-2.5 rounded-sm ${pathname === "" ? "bg-slate-500 text-white" : "hover:bg-slate-100"}`}>
+                            <Link href="/class" className={`w-full p-1.5 flex items-center gap-2.5 rounded-sm ${pathname === "/class" ? "bg-slate-500 text-white" : "hover:bg-slate-100"}`}>
                                 <MdOutlineClass className="w-6 h-6" />
-                                <span className="capitalize">my module</span>
+                                <span className="capitalize">class management</span>
                             </Link>
                         )}
                         {role === "superadmin" && (
