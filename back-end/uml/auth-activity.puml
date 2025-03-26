@@ -1,0 +1,71 @@
+@startuml
+|User|
+start
+:Send registration request;
+|AuthController|
+:Validate request data;
+if (Valid data?) then (yes)
+    :Check if email exists;
+    |AuthRepository|
+    :Find user by email;
+    if (Email exists?) then (yes)
+        :Send error response;
+        stop
+    else (no)
+        :Hash password;
+        :Create user;
+        :Send success response;
+        stop
+    endif
+else (no)
+    :Send error response;
+    stop
+endif
+
+|User|
+:Send login request;
+|AuthController|
+:Validate request data;
+if (Valid data?) then (yes)
+    :Find user by email;
+    |AuthRepository|
+    :Find user by email;
+    if (User exists?) then (yes)
+        :Compare password;
+        if (Password matches?) then (yes)
+            :Generate tokens;
+            :Send success response;
+            stop
+        else (no)
+            :Send error response;
+            stop
+        endif
+    else (no)
+        :Send error response;
+        stop
+    endif
+else (no)
+    :Send error response;
+    stop
+endif
+
+|User|
+:Send refresh token request;
+|AuthController|
+:Verify refresh token;
+if (Valid token?) then (yes)
+    :Generate new access token;
+    :Send success response;
+    stop
+else (no)
+    :Send error response;
+    stop
+endif
+
+|User|
+:Send logout request;
+|AuthController|
+:Clear refresh token cookie;
+:Send success response;
+stop
+@enduml

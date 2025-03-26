@@ -1,0 +1,121 @@
+@startuml class-sequence
+
+actor User
+participant Controller
+participant Service
+participant Repository
+
+== Create Class ==
+User -> Controller: POST /api/class
+Controller -> Service: create(data)
+Service -> Repository: findTitleByAuthorId(data.authorId, data.title)
+alt title exists
+    Repository --> Service: class data
+    Service --> Controller: error
+    Controller --> User: 400 Bad Request
+else title does not exist
+    Repository -> Repository: create(data)
+    Repository --> Service: created class data
+    Service --> Controller: created class data
+    Controller --> User: 201 Created
+end
+
+== Get All Classes ==
+User -> Controller: GET /api/class
+Controller -> Service: findAll()
+Service -> Repository: findAll()
+Repository --> Service: classes data
+Service --> Controller: classes data
+Controller --> User: 200 OK
+
+== Get Class by ID ==
+User -> Controller: GET /api/class/:classId
+Controller -> Service: findByClassId(classId)
+Service -> Repository: findByClassId(classId)
+alt class found
+    Repository --> Service: class data
+    Service --> Controller: class data
+    Controller --> User: 200 OK
+else class not found
+    Repository --> Service: not found
+    Service --> Controller: error
+    Controller --> User: 404 Not Found
+end
+
+== Get Classes by Author ID ==
+User -> Controller: GET /api/class/author/:authorId
+Controller -> Service: findByAuthorId(authorId)
+Service -> Repository: findByAuthorId(authorId)
+alt classes found
+    Repository --> Service: classes data
+    Service --> Controller: classes data
+    Controller --> User: 200 OK
+else classes not found
+    Repository --> Service: not found
+    Service --> Controller: error
+    Controller --> User: 404 Not Found
+end
+
+== Update Class ==
+User -> Controller: PATCH /api/class/author/:id/:classId
+Controller -> Service: update(classId, data)
+Service -> Repository: findByClassId(classId)
+alt class found
+    Repository --> Service: class data
+    Repository -> Repository: update(classId, data)
+    Repository --> Service: updated class data
+    Service --> Controller: updated class data
+    Controller --> User: 200 OK
+else class not found
+    Repository --> Service: not found
+    Service --> Controller: error
+    Controller --> User: 404 Not Found
+end
+
+== Soft Delete Class ==
+User -> Controller: DELETE /api/class/author/:id/:classId
+Controller -> Service: softDelete(classId)
+Service -> Repository: findByClassId(classId)
+alt class found
+    Repository --> Service: class data
+    Repository -> Repository: softDelete(classId)
+    Repository --> Service: deleted class data
+    Service --> Controller: deleted class data
+    Controller --> User: 200 OK
+else class not found
+    Repository --> Service: not found
+    Service --> Controller: error
+    Controller --> User: 404 Not Found
+end
+
+== Trash Classes by Author ID ==
+User -> Controller: GET /api/class/author/:id/trash
+Controller -> Service: trash(authorId)
+Service -> Repository: findByAuthorId(authorId)
+alt classes found
+    Repository --> Service: trashed classes data
+    Service --> Controller: trashed classes data
+    Controller --> User: 200 OK
+else classes not found
+    Repository --> Service: not found
+    Service --> Controller: error
+    Controller --> User: 404 Not Found
+end
+
+== Restore Class ==
+User -> Controller: PATCH /api/class/author/:id/:classId/restore
+Controller -> Service: restore(classId)
+Service -> Repository: findByClassId(classId)
+alt class found
+    Repository --> Service: class data
+    Repository -> Repository: restore(classId)
+    Repository --> Service: restored class data
+    Service --> Controller: restored class data
+    Controller --> User: 200 OK
+else class not found
+    Repository --> Service: not found
+    Service --> Controller: error
+    Controller --> User: 404 Not Found
+end
+
+@enduml

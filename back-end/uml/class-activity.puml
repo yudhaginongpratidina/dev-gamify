@@ -1,0 +1,122 @@
+@startuml class-activity
+
+start
+
+' POST /api/class
+:User sends POST /api/class;
+:Validate request body using classCreateSchema;
+if (Valid?) then (yes)
+  :Service create(data);
+  :Check if Account exists by authorId;
+  if (Account exists?) then (yes)
+    :Check if Class title exists for the author;
+    if (Title exists?) then (yes)
+      :Return 400 Bad Request (Class already exists);
+    else (no)
+      :Repository create(data);
+      if (Success?) then (yes)
+        :Return 201 Created;
+      else (no)
+        :Return 500 Internal Server Error;
+      endif
+    endif
+  else (no)
+    :Return 404 Not Found (Account not found);
+  endif
+else (no)
+  :Return 400 Bad Request (Validation failed);
+endif
+
+' GET /api/class
+:User sends GET /api/class;
+:Service findAll();
+:Repository findAll();
+if (Success?) then (yes)
+  :Return 200 OK with list of classes;
+else (no)
+  :Return 500 Internal Server Error;
+endif
+
+' GET /api/class/:classId
+:User sends GET /api/class/:classId;
+:Service findByClassId(classId);
+:Repository findByClassId(classId);
+if (Found?) then (yes)
+  :Return 200 OK with class details;
+else (no)
+  :Return 404 Not Found (Class not found);
+endif
+
+' GET /api/class/author/:authorId
+:User sends GET /api/class/author/:authorId;
+:Service findByAuthorId(authorId);
+:Repository findByAuthorId(authorId);
+if (Found?) then (yes)
+  :Return 200 OK with classes by author;
+else (no)
+  :Return 404 Not Found (Classes not found);
+endif
+
+' PATCH /api/class/author/:id/:classId
+:User sends PATCH /api/class/author/:id/:classId;
+:Validate request body using classUpdateSchema;
+if (Valid?) then (yes)
+  :Service update(classId, data);
+  :Check if Class exists by classId;
+  if (Found?) then (yes)
+    :Repository update(classId, data);
+    if (Success?) then (yes)
+      :Return 200 OK (Class updated);
+    else (no)
+      :Return 500 Internal Server Error;
+    endif
+  else (no)
+    :Return 404 Not Found (Class not found);
+  endif
+else (no)
+  :Return 400 Bad Request (Validation failed);
+endif
+
+' DELETE /api/class/author/:id/:classId
+:User sends DELETE /api/class/author/:id/:classId;
+:Service softDelete(classId);
+:Check if Class exists by classId;
+if (Found?) then (yes)
+  :Repository softDelete(classId);
+  if (Success?) then (yes)
+    :Return 200 OK (Class deleted);
+  else (no)
+    :Return 500 Internal Server Error;
+  endif
+else (no)
+  :Return 404 Not Found (Class not found);
+endif
+
+' GET /api/class/author/:id/trash
+:User sends GET /api/class/author/:id/trash;
+:Service trash(authorId);
+:Repository findByAuthorId(authorId) with deleted=true;
+if (Found?) then (yes)
+  :Return 200 OK with trashed classes;
+else (no)
+  :Return 404 Not Found (Trashed classes not found);
+endif
+
+' PATCH /api/class/author/:id/:classId/restore
+:User sends PATCH /api/class/author/:id/:classId/restore;
+:Service restore(classId);
+:Check if Class exists by classId;
+if (Found?) then (yes)
+  :Repository restore(classId);
+  if (Success?) then (yes)
+    :Return 200 OK (Class restored);
+  else (no)
+    :Return 500 Internal Server Error;
+  endif
+else (no)
+  :Return 404 Not Found (Class not found);
+endif
+
+stop
+
+@enduml

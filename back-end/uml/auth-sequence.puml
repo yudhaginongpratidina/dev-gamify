@@ -1,0 +1,63 @@
+@startuml auth-sequence
+actor User
+participant AuthController
+participant AuthService
+participant AuthRepository
+
+== Register ==
+User -> AuthController: POST /api/auth/register
+AuthController -> AuthService: register(data)
+AuthService -> AuthRepository: findEmail(data.email)
+AuthRepository --> AuthService: user (or null)
+alt Email exists
+    AuthService -> AuthController: throw Email already exists
+    AuthController --> User: 409 Conflict
+else
+    AuthService -> AuthService: hashPassword(data.password)
+    AuthService -> AuthRepository: create(newUser)
+    AuthRepository --> AuthService: createdUser
+    AuthService --> AuthController: createdUser
+    AuthController --> User: 201 Created
+end
+
+== Login ==
+User -> AuthController: POST /api/auth/login
+AuthController -> AuthService: login(email, password)
+AuthService -> AuthRepository: findEmail(email)
+AuthRepository --> AuthService: user
+alt User exists
+    AuthService -> AuthService: compare(password, user.password)
+    alt Password matches
+        AuthService -> AuthService: generateTokens(user)
+        AuthService --> AuthController: authenticatedUser, tokens
+        AuthController -> User: 200 OK, token
+    else
+        AuthService -> AuthController: throw Invalid email or password
+        AuthController --> User: 401 Unauthorized
+    end
+else
+    AuthService -> AuthController: throw Invalid email or password
+    AuthController --> User: 401 Unauthorized
+end
+
+== Refresh Token ==
+User -> AuthController: GET /api/auth/refresh-token
+AuthController -> AuthService: verify(refresh_token)
+alt Valid token
+    AuthService -> AuthService: generateAccessToken(decoded)
+    AuthService --> AuthController: access_token
+    AuthController -> User: 200 OK, access_token
+else
+    AuthService -> AuthController: throw Invalid refresh token
+    AuthController --> User: 403 Forbidden
+end
+
+== Logout ==
+User -> AuthController: GET /api/auth/logout
+alt User logged in
+    AuthController -> AuthController: clearRefreshTokenCookie()
+    AuthController -> User: 200 OK, "Logout success"
+else
+    AuthController -> User: 200 OK, "User not logged in"
+end
+@enduml

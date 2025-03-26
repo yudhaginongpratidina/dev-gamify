@@ -1,0 +1,77 @@
+@startuml get_account_details
+title Get Account Details
+
+start
+:User sends GET /api/account/:id;
+:API Gateway forwards request to AccountController;
+:AccountController calls AccountService.show(id);
+:AccountService calls AccountRepository.show(id);
+if (Account found?) then (yes)
+  :AccountRepository returns account;
+  :AccountService returns account;
+  :AccountController returns 200 OK with account data;
+else (no)
+  :AccountRepository returns null;
+  :AccountService throws 404 error;
+  :AccountController catches error and returns 404 Not Found;
+endif
+stop
+
+@enduml
+
+@startuml update_account
+title Update Account
+
+start
+:User sends PATCH /api/account/:id;
+:API Gateway forwards request to AccountController;
+:AccountController validates request body;
+if (Validation passes?) then (yes)
+  :AccountController calls AccountService.update(id, data);
+  :AccountService calls AccountRepository.show(id);
+  if (Account found?) then (yes)
+    :AccountRepository returns account;
+    :AccountService hashes new password;
+    :AccountService calls AccountRepository.update(id, data);
+    :AccountRepository returns updated account;
+    :AccountService returns updated account;
+    :AccountController returns 200 OK with updated account data;
+  else (no)
+    :AccountRepository returns null;
+    :AccountService throws 404 error;
+    :AccountController catches error and returns 404 Not Found;
+  endif
+else (no)
+  :AccountController returns 400 Bad Request;
+endif
+stop
+
+@enduml
+
+@startuml delete_account
+title Delete Account
+
+start
+:User sends DELETE /api/account/:id;
+:API Gateway forwards request to AccountController;
+:AccountController validates request body;
+if (Validation passes?) then (yes)
+  :AccountController calls AccountService.delete(id);
+  :AccountService calls AccountRepository.show(id);
+  if (Account found?) then (yes)
+    :AccountRepository returns account;
+    :AccountService calls AccountRepository.delete(id);
+    :AccountRepository returns;
+    :AccountService returns;
+    :AccountController returns 204 No Content;
+  else (no)
+    :AccountRepository returns null;
+    :AccountService throws 404 error;
+    :AccountController catches error and returns 404 Not Found;
+  endif
+else (no)
+  :AccountController returns 400 Bad Request;
+endif
+stop
+
+@enduml

@@ -13,6 +13,12 @@ enum Role {
     superadmin // Superadmin user role
 }
 
+enum Level {
+    beginner        // Beginner level
+    intermediate    // Intermediate level
+    advanced        // Advanced level
+}
+
 // Model definition for the User table
 model User {
     id        Int      @id @default(autoincrement())    // Primary key with auto-increment
@@ -25,4 +31,52 @@ model User {
     createdAt DateTime @default(now())                  // Timestamp for when the user was created
     updatedAt DateTime @updatedAt                       // Timestamp for when the user was last updated
     deleted   Boolean  @default(false)                  // Soft delete flag with default value 'false'
+
+    // Relationship with the Module table
+    classes   Class[]
+}
+
+// Model definition for the Module table
+model Class {
+    id          Int         @id @default(autoincrement())    // Primary key with auto-increment
+    authorId    Int                                          // Foreign key referencing the User table
+    title       String                                       // Module title
+    level       Level       @default(beginner)               // Module level with default value 'beginner'
+    pointUnlock Int         @default(0)                      // Point required to unlock the module
+    createdAt   DateTime    @default(now())                  // Timestamp for when the module was created
+    updatedAt   DateTime    @updatedAt                       // Timestamp for when the module was last updated
+    deleted     Boolean     @default(false)                  // Soft delete flag with default value 'false'
+
+    // Relationship with the User table
+    author    User     @relation(fields: [authorId], references: [id])
+
+    // Relationship with the Chapter table
+    chapters  Chapter[]
+}
+
+// Model definition for the Chapter table
+model Chapter {
+    // general
+    id              Int         @id @default(autoincrement())    // Primary key with auto-increment
+    moduleId        Int                                          // Foreign key referencing the Module table
+    title           String                                       // Chapter title
+    content         String      @db.Text                         // Chapter content
+    pointExperience Int         @default(0)                      // Point required to unlock the chapter
+    pointReward     Int         @default(0)                      // Point reward for completing the chapter
+    
+    // Pilihan ganda
+    question        String                                       // Pertanyaan pilihan ganda
+    optionA         String                                       // Pilihan A
+    optionB         String                                       // Pilihan B
+    optionC         String                                       // Pilihan C
+    optionD         String                                       // Pilihan D
+    correctAnswer   String                                       // Jawaban yang benar (A/B/C/D)
+
+    // Timestamp
+    createdAt       DateTime    @default(now())                  // Timestamp for when the chapter was created
+    updatedAt       DateTime    @updatedAt                       // Timestamp for when the chapter was last updated
+    deleted         Boolean     @default(false)                  // Soft delete flag with default value 'false'
+    
+    // Relationship with the Module table
+    module    Class     @relation(fields: [moduleId], references: [id])
 }
