@@ -48,12 +48,14 @@ app.delete('/api/account/:id', VerifyToken, Me, AccountController.delete);
 // Setting up a route for the ClassController
 app.post('/api/class', VerifyToken, ClassController.create);
 app.get('/api/class', ClassController.findAll);
-app.get('/api/class/:id', ClassController.findById);
+app.get('/api/class/:classId', ClassController.findById);
 app.get('/api/class/author/:authorId', ClassController.findByAuthorId);
-app.get('/api/class/author/:authorId/trash', ClassController.trash);
 app.patch('/api/class/author/:id/:classId', VerifyToken, Me, ClassController.update);
-app.patch('/api/class/author/:id/:classId/restore', VerifyToken, Me, ClassController.restore);
 app.delete('/api/class/author/:id/:classId', VerifyToken, Me,  ClassController.softDelete);
+
+// Setting up a route for the ClassController (trash and restore)
+app.get('/api/class/author/:id/trash' , VerifyToken, Me, ClassController.trash);
+app.patch('/api/class/author/:id/:classId/restore', VerifyToken, Me, ClassController.restore);
 
 app.use(NotFound);                                          // Using the NotFound middleware
 app.use(ErrorHandler);                                      // Using the ErrorHandler middleware

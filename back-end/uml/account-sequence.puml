@@ -1,0 +1,66 @@
+@startuml get_account_details
+title Get Account Details
+
+actor User
+participant "API Gateway" as APIG
+participant "AccountController" as AC
+participant "AccountService" as AS
+participant "AccountRepository" as AR
+
+User -> APIG: GET /api/account/:id
+APIG -> AC: show(req, res, next)
+AC -> AS: show(id)
+AS -> AR: show(id)
+AR -> AS: return account
+AS -> AC: return account
+AC -> APIG: res.status(200).json({ message: 'Account found', data: response })
+APIG -> User: 200 OK, { message: 'Account found', data: response }
+
+@enduml
+
+@startuml update_account
+title Update Account
+
+actor User
+participant "API Gateway" as APIG
+participant "AccountController" as AC
+participant "AccountService" as AS
+participant "AccountRepository" as AR
+
+User -> APIG: PATCH /api/account/:id
+APIG -> AC: update(req, res, next)
+AC -> AC: validate(accountUpdateSchema, req.body)
+AC -> AS: update(id, data)
+AS -> AR: show(id)
+AR -> AS: return account
+AS -> AS: bcrypt.hash(data.password, 10)
+AS -> AR: update(id, data)
+AR -> AS: return updated account
+AS -> AC: return updated account
+AC -> APIG: res.status(200).json({ message: 'Account updated', data: response })
+APIG -> User: 200 OK, { message: 'Account updated', data: response }
+
+@enduml
+
+@startuml delete_account
+title Delete Account
+
+actor User
+participant "API Gateway" as APIG
+participant "AccountController" as AC
+participant "AccountService" as AS
+participant "AccountRepository" as AR
+
+User -> APIG: DELETE /api/account/:id
+APIG -> AC: delete(req, res, next)
+AC -> AC: validate(accountDeleteSchema, req.body)
+AC -> AS: delete(id)
+AS -> AR: show(id)
+AR -> AS: return account
+AS -> AR: delete(id)
+AR -> AS: return
+AS -> AC: return
+AC -> APIG: res.status(204).json({ message: 'Account deleted' })
+APIG -> User: 204 No Content, { message: 'Account deleted' }
+
+@enduml
