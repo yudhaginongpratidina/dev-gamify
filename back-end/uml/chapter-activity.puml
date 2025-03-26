@@ -1,0 +1,76 @@
+@startuml
+start
+
+:User sends request;
+if (Is the user authenticated?) then (Yes)
+    :Proceed with request;
+    if (Is the request valid?) then (Yes)
+        switch (Request Type)
+            case (POST /api/chapter)
+                :Request Body:
+                {
+                  "classId": 1,
+                  "title": "Chapter Title",
+                  "content": "Chapter Content",
+                  "question": "Question Text",
+                  "optionA": "Option A",
+                  "optionB": "Option B",
+                  "optionC": "Option C",
+                  "optionD": "Option D",
+                  "correctAnswer": "Option A"
+                };
+                :Validate request body;
+                if (Does classId exist?) then (Yes)
+                    :Create chapter in database;
+                    :Return 201 response with chapter details;
+                else (No)
+                    :Return 400 response (Class not found);
+                endif
+            case (GET /api/chapter/class/{classId})
+                :Request Param: classId;
+                :Fetch chapters from database;
+                if (Chapters found?) then (Yes)
+                    :Return 200 response with chapters list;
+                else (No)
+                    :Return 404 response (Chapters not found);
+                endif
+            case (GET /api/chapter/{chapterId})
+                :Request Param: chapterId;
+                :Fetch chapter details from database;
+                if (Chapter found?) then (Yes)
+                    :Return 200 response with chapter details;
+                else (No)
+                    :Return 404 response (Chapter not found);
+                endif
+            case (PATCH /api/chapter/author/{id}/chapter/{chapterId})
+                :Request Param: id, chapterId;
+                :Request Body:
+                {
+                  "title": "Updated Title",
+                  "content": "Updated Content"
+                };
+                :Validate request body;
+                if (Chapter exists?) then (Yes)
+                    :Update chapter in database;
+                    :Return 200 response with updated chapter details;
+                else (No)
+                    :Return 404 response (Chapter not found);
+                endif
+            case (DELETE /api/chapter/author/{id}/chapter/{chapterId})
+                :Request Param: id, chapterId;
+                if (Chapter exists?) then (Yes)
+                    :Delete chapter from database;
+                    :Return 200 response (Chapter deleted);
+                else (No)
+                    :Return 404 response (Chapter not found);
+                endif
+        endswitch
+    else (No)
+        :Return 400 response (Validation error);
+    endif
+else (No)
+    :Return 401 response (Unauthorized);
+endif
+
+stop
+@enduml
