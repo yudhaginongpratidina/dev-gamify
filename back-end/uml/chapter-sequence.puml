@@ -1,0 +1,72 @@
+@startuml
+actor User
+participant "API Gateway" as APIGateway
+participant "ChapterController" as Controller
+participant "ChapterService" as Service
+participant "ChapterRepository" as Repository
+database "Database" as DB
+
+== Create Chapter ==
+User -> APIGateway: POST /api/chapter
+APIGateway -> Controller: create(req, res, next)
+Controller -> Service: create(data)
+Service -> Repository: create(data)
+Repository -> DB: Insert chapter data
+DB --> Repository: Chapter created
+Repository --> Service: Chapter details
+Service --> Controller: Chapter details
+Controller --> APIGateway: 201 Created (Chapter details)
+
+== Get Chapters by Class ID ==
+User -> APIGateway: GET /api/chapter/class/{classId}
+APIGateway -> Controller: findAllByClassId(req, res, next)
+Controller -> Service: findAllByClassId(classId)
+Service -> Repository: findAllByClassId(classId)
+Repository -> DB: Query chapters by classId
+DB --> Repository: List of chapters
+Repository --> Service: List of chapters
+Service --> Controller: List of chapters
+Controller --> APIGateway: 200 OK (List of chapters)
+
+== Get Chapter Details ==
+User -> APIGateway: GET /api/chapter/{chapterId}
+APIGateway -> Controller: findDetailByChapterId(req, res, next)
+Controller -> Service: findDetailByChapterId(chapterId)
+Service -> Repository: findDetailByChapterId(chapterId)
+Repository -> DB: Query chapter by chapterId
+DB --> Repository: Chapter details
+Repository --> Service: Chapter details
+Service --> Controller: Chapter details
+Controller --> APIGateway: 200 OK (Chapter details)
+
+== Update Chapter ==
+User -> APIGateway: PATCH /api/chapter/author/{id}/chapter/{chapterId}
+APIGateway -> Controller: updateByChapterId(req, res, next)
+Controller -> Service: updateByChapterId(chapterId, data)
+Service -> Repository: findDetailByChapterId(chapterId)
+Repository -> DB: Query chapter by chapterId
+DB --> Repository: Chapter details
+Repository --> Service: Chapter details
+Service -> Repository: updateByChapterId(chapterId, data)
+Repository -> DB: Update chapter data
+DB --> Repository: Updated chapter details
+Repository --> Service: Updated chapter details
+Service --> Controller: Updated chapter details
+Controller --> APIGateway: 200 OK (Updated chapter details)
+
+== Delete Chapter ==
+User -> APIGateway: DELETE /api/chapter/author/{id}/chapter/{chapterId}
+APIGateway -> Controller: deleteByChapterId(req, res, next)
+Controller -> Service: deleteByChapterId(chapterId)
+Service -> Repository: findDetailByChapterId(chapterId)
+Repository -> DB: Query chapter by chapterId
+DB --> Repository: Chapter details
+Repository --> Service: Chapter details
+Service -> Repository: deleteByChapterId(chapterId)
+Repository -> DB: Delete chapter data
+DB --> Repository: Deletion confirmation
+Repository --> Service: Deletion confirmation
+Service --> Controller: Deletion confirmation
+Controller --> APIGateway: 200 OK (Chapter deleted)
+
+@enduml

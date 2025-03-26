@@ -13,6 +13,7 @@ import WellcomeController from "./domains/wellcome/wellcome.controller.js";     
 import AuthController from "./domains/auth/auth.controller.js";                 // Importing the AuthController
 import AccountController from "./domains/account/account.controller.js";        // Importing the AccountController
 import ClassController from "./domains/class/class.controller.js";              // Importing the ClassController
+import ChapterController from "./domains/chapter/chapter.controller.js";        // Importing the ChapterController
 
 
 const app = express();                                      // Creating an instance of an Express application
@@ -56,6 +57,14 @@ app.delete('/api/class/author/:id/:classId', VerifyToken, Me,  ClassController.s
 // Setting up a route for the ClassController (trash and restore)
 app.get('/api/class/author/:id/trash' , VerifyToken, Me, ClassController.trash);
 app.patch('/api/class/author/:id/:classId/restore', VerifyToken, Me, ClassController.restore);
+
+// Setting up a route for the ChapterController
+app.post('/api/chapter', VerifyToken, ChapterController.create);
+app.get('/api/chapter/:chapterId', ChapterController.findDetailByChapterId);
+app.get('/api/chapter/class/:classId', ChapterController.findAllByClassId);
+app.get('/api/chapter/author/:id/chapter/:chapterId', VerifyToken, Me, ChapterController.findDetailByChapterId);
+app.patch('/api/chapter/author/:id/chapter/:chapterId', VerifyToken, Me, ChapterController.updateByChapterId);
+app.delete('/api/chapter/author/:id/chapter/:chapterId', VerifyToken, Me, ChapterController.deleteByChapterId);
 
 app.use(NotFound);                                          // Using the NotFound middleware
 app.use(ErrorHandler);                                      // Using the ErrorHandler middleware
