@@ -1,0 +1,15 @@
+/* Import Tailwind CSS for utility-first styling. */
+@import "tailwindcss";
+
+/* 
+   Global styles applied to all elements:
+   - Hide the scrollbar across different browsers for a cleaner UI.
+   - `::-webkit-scrollbar`: Hides the scrollbar in WebKit-based browsers (e.g., Chrome, Safari).
+   - `-ms-overflow-style: none`: Disables the scrollbar in Internet Explorer.
+   - `scrollbar-width: none`: Hides the scrollbar in Firefox.
+*/
+* {
+    ::-webkit-scrollbar { display: none; }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
