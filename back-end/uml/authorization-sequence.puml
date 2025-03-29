@@ -1,0 +1,51 @@
+@startuml
+actor Client
+participant "AuthorizationController" as Controller
+participant "AuthorizationService" as Service
+participant "AuthorizationRepository" as Repository
+database "Database" as DB
+
+== Fetch All Users ==
+Client -> Controller: GET /api/authorization
+Controller -> Service: getAllUser()
+Service -> Repository: getAllUser()
+Repository -> DB: SELECT * FROM User WHERE deleted = false
+DB --> Repository: List of users
+Repository --> Service: List of users
+Service --> Controller: List of users
+Controller --> Client: 200 OK (Users found)
+
+== Fetch User by ID ==
+Client -> Controller: GET /api/authorization/{userId}
+Controller -> Service: getUserById(userId)
+Service -> Repository: getUserById(userId)
+Repository -> DB: SELECT * FROM User WHERE id = userId
+DB --> Repository: User object or null
+Repository --> Service: User object or null
+alt User found
+    Service --> Controller: User object
+    Controller --> Client: 200 OK (User found)
+else User not found
+    Service -> Controller: Throw 404 error
+    Controller --> Client: 404 Not Found (User not found)
+end
+
+== Change User Role ==
+Client -> Controller: PATCH /api/authorization/{userId}
+Controller -> Service: changeRole(userId, role)
+Service -> Repository: getUserById(userId)
+Repository -> DB: SELECT * FROM User WHERE id = userId
+DB --> Repository: User object or null
+Repository --> Service: User object or null
+alt User found
+    Service -> Repository: changeRole(userId, role)
+    Repository -> DB: UPDATE User SET role = role WHERE id = userId
+    DB --> Repository: Updated user object
+    Repository --> Service: Updated user object
+    Service --> Controller: Updated user object
+    Controller --> Client: 200 OK (Role changed)
+else User not found
+    Service -> Controller: Throw 404 error
+    Controller --> Client: 404 Not Found (User not found)
+end
+@enduml

@@ -9,11 +9,12 @@ import ErrorHandler from "./middlewares/ErrorHandler.js";   // Importing the Err
 import NotFound from "./middlewares/NotFound.js";           // Importing the NotFound middleware
 
 
-import WellcomeController from "./domains/wellcome/wellcome.controller.js";     // Importing the WellcomeController
-import AuthController from "./domains/auth/auth.controller.js";                 // Importing the AuthController
-import AccountController from "./domains/account/account.controller.js";        // Importing the AccountController
-import ClassController from "./domains/class/class.controller.js";              // Importing the ClassController
-import ChapterController from "./domains/chapter/chapter.controller.js";        // Importing the ChapterController
+import WellcomeController from "./domains/wellcome/wellcome.controller.js";                 // Importing the WellcomeController
+import AuthController from "./domains/auth/auth.controller.js";                             // Importing the AuthController
+import AccountController from "./domains/account/account.controller.js";                    // Importing the AccountController
+import AuthorizationController from "./domains/authorization/authorization.controller.js";  // Importing the AuthorizationController
+import ClassController from "./domains/class/class.controller.js";                          // Importing the ClassController
+import ChapterController from "./domains/chapter/chapter.controller.js";                    // Importing the ChapterController
 
 
 const app = express();                                      // Creating an instance of an Express application
@@ -45,6 +46,11 @@ app.get('/api/auth/refresh-token', AuthController.refresh_token);
 app.get('/api/account/:id', VerifyToken, AccountController.show);
 app.patch('/api/account/:id', VerifyToken, Me, AccountController.update);
 app.delete('/api/account/:id', VerifyToken, Me, AccountController.delete);
+
+// Setting up a route for the AuthorizationController
+app.get('/api/authorization', VerifyToken, AuthorizationController.getAllUser);
+app.get('/api/authorization/:userId', VerifyToken, AuthorizationController.getUserById);
+app.patch('/api/authorization/:userId', VerifyToken, AuthorizationController.changeRole);
 
 // Setting up a route for the ClassController
 app.post('/api/class', VerifyToken, ClassController.create);

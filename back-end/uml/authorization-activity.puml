@@ -1,0 +1,50 @@
+@startuml
+start
+
+:Client sends request to API;
+
+if (Authorization header exists?) then (Yes)
+    :Extract Bearer Token;
+    if (Token is valid?) then (Yes)
+        :Decode Token;
+        :Extract user ID and role;
+        if (User role is admin or superadmin?) then (Yes)
+            :Proceed with requested operation;
+            if (Operation is "Get All Users") then (Yes)
+                :Fetch all users from database;
+                :Return 200 with user list;
+            else if (Operation is "Get User by ID") then (Yes)
+                :Fetch user by ID from database;
+                if (User exists?) then (Yes)
+                    :Return 200 with user details;
+                else (No)
+                    :Return 404 with "User not found";
+                endif
+            else if (Operation is "Change User Role") then (Yes)
+                :Validate request body with schema;
+                if (Validation passes?) then (Yes)
+                    :Fetch user by ID from database;
+                    if (User exists?) then (Yes)
+                        :Update user role in database;
+                        :Return 200 with updated user details;
+                    else (No)
+                        :Return 404 with "User not found";
+                    endif
+                else (No)
+                    :Return 400 with validation error;
+                endif
+            else (No)
+                :Return 400 with "Invalid operation";
+            endif
+        else (No)
+            :Return 403 with "Forbidden";
+        endif
+    else (No)
+        :Return 401 with "Unauthorized";
+    endif
+else (No)
+    :Return 401 with "Unauthorized";
+endif
+
+stop
+@enduml
