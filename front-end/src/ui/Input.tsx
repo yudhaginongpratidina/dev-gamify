@@ -42,7 +42,7 @@ export default function Input({ name, type, disabled, icon, value, onChange, ...
     };
 
     return (
-        <div className="select-none">
+        <div className="w-full select-none">
             {/* Label for the input field, formatted to replace underscores with spaces and lowercase the text */}
             <label htmlFor={name} className="text-sm capitalize text-gray-600">
                 {name.replace(/_/g, " ").toLowerCase()}
