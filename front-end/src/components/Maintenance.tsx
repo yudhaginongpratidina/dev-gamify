@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react";
+import Countdown from "@/ui/Countdown";
 
 export default function Maintenance() {
     const [countdown, setCountdown] = useState({
@@ -37,24 +38,7 @@ export default function Maintenance() {
                 <p className="text-lg mb-6">We are currently working hard to improve your experience. Stay tuned!</p>
                 <div className="mb-6">
                     <h2 className="text-2xl font-semibold">Countdown:</h2>
-                    <div className="flex justify-center space-x-4 mt-4">
-                        <div className="text-center border-4 border-white rounded-lg p-4 shadow-lg">
-                            <p className="text-3xl font-bold">{countdown.days}</p>
-                            <p className="text-sm">Days</p>
-                        </div>
-                        <div className="text-center border-4 border-white rounded-lg p-4 shadow-lg">
-                            <p className="text-3xl font-bold">{countdown.hours}</p>
-                            <p className="text-sm">Hours</p>
-                        </div>
-                        <div className="text-center border-4 border-white rounded-lg p-4 shadow-lg">
-                            <p className="text-3xl font-bold">{countdown.minutes}</p>
-                            <p className="text-sm">Minutes</p>
-                        </div>
-                        <div className="text-center border-4 border-white rounded-lg p-4 shadow-lg">
-                            <p className="text-3xl font-bold">{countdown.seconds}</p>
-                            <p className="text-sm">Seconds</p>
-                        </div>
-                    </div>
+                    <Countdown days={countdown.days} hours={countdown.hours} minutes={countdown.minutes} seconds={countdown.seconds}/>
                 </div>
             </div>
         </div>
