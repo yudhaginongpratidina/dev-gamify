@@ -26,7 +26,7 @@ export default function Select({ name, options, disabled, onChange, ...props }: 
                     disabled={disabled}
                     onChange={onChange}
                     {...props}
-                    className={`w-full h-[40px] px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 ${disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-white'}`}
+                    className={`w-full h-[40px] px-4 py-2.5 border rounded-sm focus:outline-none focus:ring focus:ring-blue-300 ${disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-white'}`}
                 >
                     {options.map((option) => (
                         <option key={option.value} value={option.value}>
