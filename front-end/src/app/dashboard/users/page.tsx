@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react"
 
 import ListUser from "@/components/ListUser"
-import ModalFormUser from "@/components/ModalFormUser"
 
 import api from "@/utils/api"
 import { BiSolidMessageSquareError } from "react-icons/bi"
