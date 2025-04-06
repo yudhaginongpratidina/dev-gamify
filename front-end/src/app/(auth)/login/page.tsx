@@ -10,6 +10,10 @@ import LoadingSpinner from "@/ui/LoadingSpinner"
 import { BiSolidMessageSquareError } from "react-icons/bi"
 import { BsFillInfoSquareFill } from "react-icons/bs"
 
+import api from "@/utils/api"
+import { setCookieAuthenticated } from "@/utils/cookie-authenticated";
+import { setStorageAuthenticated } from "@/utils/secure-storage-authenticated";
+
 type FormDataType = {
     email: string;
     password: string;
@@ -39,9 +43,16 @@ export default function Page() {
         try {
             const { email, password } = formData;
             setStatus({ isError: false, isLoading: true, message: "" });
-            console.log(email, password);
-            displayMessage(false, "Login successful");
+            const response = await api.post("/auth/login", {
+                email: email,
+                password: password,
+            });
+            const { token, message } = response.data;
+            setCookieAuthenticated(token);
+            setStorageAuthenticated(token);
+            displayMessage(false, message);
             setFormData(initialFormData);
+            setTimeout(() => window.location.href = "/dashboard/overview", 2000);
         } catch (error: any) {
             const errorMessage = error?.response?.data?.message || error?.response?.data[0]?.message || "An error occurred";
             displayMessage(true, errorMessage);

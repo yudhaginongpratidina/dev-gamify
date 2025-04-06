@@ -10,6 +10,8 @@ import LoadingSpinner from "@/ui/LoadingSpinner"
 import { BiSolidMessageSquareError } from "react-icons/bi"
 import { BsFillInfoSquareFill } from "react-icons/bs"
 
+import api from "@/utils/api"
+
 type FormDataType = {
     full_name: string;
     email: string;
@@ -43,9 +45,22 @@ export default function Page() {
         try {
             const { full_name, email, password, confirm_password } = formData;
             setStatus({ isError: false, isLoading: true, message: "" });
-            console.log(full_name, email, password, confirm_password);
-            displayMessage(false, "Login successful");
+            if (password !== confirm_password) {
+                displayMessage(true, "Passwords do not match");
+                return;
+            }
+            const response = await api.post("/auth/register", {
+                fullname: full_name,
+                email: email,
+                password: password,
+                confirmPassword: confirm_password,
+            });
+            const { message } = response.data;
+            displayMessage(false, message);
             setFormData(initialFormData);
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
         } catch (error: any) {
             const errorMessage = error?.response?.data?.message || error?.response?.data[0]?.message || "An error occurred";
             displayMessage(true, errorMessage);
