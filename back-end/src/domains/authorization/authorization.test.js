@@ -99,7 +99,7 @@ describe("Authorization Module Tests", () => {
                 .set("Authorization", `Bearer ${adminToken}`)
                 .send({ role: "invalidRole" });
             expect(response.status).toBe(500);
-            expect(response.body[0].message).toBe("Invalid enum value. Expected 'user' | 'admin' | 'superadmin', received 'invalidRole'");
+            expect(response.body[0].message).toBe("Invalid enum value. Expected 'user' | 'instructor' | 'admin', received 'invalidRole'");
         });
 
         it("should return 404 for non-existent user", async () => {
