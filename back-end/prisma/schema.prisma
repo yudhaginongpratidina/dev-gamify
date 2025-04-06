@@ -9,8 +9,8 @@ datasource db {
 
 enum Role {
     user       // Regular user role
+    instructor // Instructor user role
     admin      // Admin user role
-    superadmin // Superadmin user role
 }
 
 enum Level {
