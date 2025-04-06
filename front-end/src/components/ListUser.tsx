@@ -49,7 +49,7 @@ export default function ListUser({ users }: { users?: any[] }) {
                             {users?.map((user: any, index: number) => (
                                 <tr key={index} className="w-full">
                                     <td className="min-w-[80px] max-w-[80px] p-2 border border-gray-300 text-center">{index + 1}</td>
-                                    <td className="w-full p-2 border border-gray-300 text-start">{user.fullname}</td>
+                                    <td className="w-full p-2 border border-gray-300 text-start text-nowrap">{user.fullname}</td>
                                     <td className="min-w-[130px] max-w-[130px] p-2 border border-gray-300 text-center">
                                         {user.role === "user" && <span className="px-4 py-1 rounded-sm text-sm bg-gray-300">{user.role}</span>}
                                         {user.role === "admin" && <span className="px-4 py-1 rounded-sm text-sm bg-rose-300">{user.role}</span>}
